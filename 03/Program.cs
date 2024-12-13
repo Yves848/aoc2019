@@ -1,26 +1,50 @@
-﻿using System.Security.AccessControl;
-
-string[] lines = File.ReadAllLines(@"C:\Users\yvesg\git\aoc2019\03\test.txt");
+﻿string[] lines = File.ReadAllLines(@"C:\Users\yvesg\git\aoc2019\03\test2.txt");
+(int, int)[] directions = [(-1, 0), (0, -1), (0, 1), (1, 0)];
 
 void part1()
+{
+  HashSet<(int, int)> crosses = new HashSet<(int, int)>();
+  HashSet<(int, int)> wires = new HashSet<(int, int)>();
+
+  lines.ToList().ForEach(l =>
   {
-    
-    List<Dir[]> wires = new List<Dir[]>();
-    lines.ToList().ForEach(l => {
-      Dir[] dirs = [];
-      var L = l.Split(',').ToList();
-      L.ForEach(x => {Console.WriteLine(x);});
+    int x = 1, y = 1;
+    var L = l.Split(',').ToList();
+    L.ForEach(ll =>
+    {
+      string D = ll[0].ToString();
+      var (dy, dx) = directions[(int)(Direction)Enum.Parse(typeof(Direction), D)];
+      int nb = int.Parse(ll.Substring(1));
+      // Console.WriteLine($"D {D} dy {dy} dx {dx} nb {nb}");
+      Enumerable.Range(0, nb - 1).ToList().ForEach(i =>
+      {
+        y += dy;
+        x += dx;
+        if (wires.Contains((y, x)))
+        {
+          crosses.Add((y, x));
+        }
+        wires.Add((y, x));
+      });
 
     });
-  }
-
-  void part2()
+  });
+  crosses.ToList().ForEach(p =>
+  {
+    Console.WriteLine($"{p.Item1} {p.Item2}");
+  });
   {
 
-  
+  }
 }
-  part1();
-  part2();
+
+void part2()
+{
+
+
+}
+part1();
+part2();
 
 public struct Dir
 {
@@ -34,6 +58,12 @@ public struct Dir
   }
 }
 
-  
 
-  
+
+enum Direction
+{
+  U,
+  L,
+  R,
+  D
+}
