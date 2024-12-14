@@ -1,41 +1,62 @@
-﻿string[] lines = File.ReadAllLines(@"C:\Users\yvesg\git\aoc2019\03\test2.txt");
-(int, int)[] directions = [(-1, 0), (0, -1), (0, 1), (1, 0)];
+﻿using System.Collections;
+using System.Security.Cryptography.X509Certificates;
+
+string[] lines = File.ReadAllLines(@"C:\Users\yvesg\git\aoc2019\03\data.txt");
+// U, L, R, D
+(int, int)[] directions = [(0, 1), (-1, 0), (1, 0), (0, -1)];
 
 void part1()
 {
   HashSet<(int, int)> crosses = new HashSet<(int, int)>();
   HashSet<(int, int)> wires = new HashSet<(int, int)>();
-
+  List<string> grid = new List<string>();
+  for (int i = 0; i < 400; i++)
+  {
+    grid.Add("".PadLeft(400, '.'));
+  }
   lines.ToList().ForEach(l =>
   {
-    int x = 1, y = 1;
+    int y = 0, x = 0;
     var L = l.Split(',').ToList();
+    Console.WriteLine(l);
+    List<(int, int)> wire = new List<(int, int)>();
     L.ForEach(ll =>
     {
+      
+      // Console.WriteLine($"Crosses = {crosses.Count}");
       string D = ll[0].ToString();
-      var (dy, dx) = directions[(int)(Direction)Enum.Parse(typeof(Direction), D)];
+      int direction = (int)(Direction)Enum.Parse(typeof(Direction), D);
+      var (dx, dy) = directions[direction];
       int nb = int.Parse(ll.Substring(1));
       // Console.WriteLine($"D {D} dy {dy} dx {dx} nb {nb}");
-      Enumerable.Range(0, nb - 1).ToList().ForEach(i =>
+      for (int i = 0; i < nb; i++)
       {
         y += dy;
         x += dx;
-        if (wires.Contains((y, x)))
+        // Console.WriteLine($"{y} {x}");
+        if (!wire.Contains((x, y)))
         {
-          crosses.Add((y, x));
+          if (wires.Contains((x, y)))
+          {
+            crosses.Add((x, y));
+          }
+          wires.Add((x, y));
         }
-        wires.Add((y, x));
-      });
+        wire.Add((x, y));
+      };
 
     });
   });
+  int m = 999999;
   crosses.ToList().ForEach(p =>
   {
-    Console.WriteLine($"{p.Item1} {p.Item2}");
+    var (x, y) = p;
+    int ay = Math.Abs(y);
+    int ax = Math.Abs(x);
+    Console.WriteLine($"{ax} {ay}");
+    if (ax + ay < m) m = ax + ay;
   });
-  {
-
-  }
+  Console.WriteLine($"{m}");
 }
 
 void part2()
@@ -45,20 +66,6 @@ void part2()
 }
 part1();
 part2();
-
-public struct Dir
-{
-  public char D { get; set; }
-  public int L { get; set; }
-
-  public Dir(char d, int l)
-  {
-    D = d;
-    L = l;
-  }
-}
-
-
 
 enum Direction
 {
